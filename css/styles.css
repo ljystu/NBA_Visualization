@@ -95,9 +95,14 @@ select {
     grid-row: 2/3;
     padding-left: 50px;
 }
+.item-notes{
+    grid-column: 3/4;
+    grid-row: 2/3;
+    /* padding-left: 50px; */
+}
 
 .item-intro p {
-    width: 40vw;
+    width: 50vw;
     text-align: left;
 }
 

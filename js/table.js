@@ -20,7 +20,7 @@ class Table {
         this.visLabels = this.colKeys.slice(2);
         this.statColors = d3.scaleOrdinal()
             .domain(this.visLabels)
-            .range(["#FA6163", "#F47E3E", "#F9C74F", "#90BE6D", "#6DC5AB", "#6687A3"]);
+            .range(["#F8494C", "#FD843E", "#F9C74F", "#39804E", "#00CCFF", "#935FCE"]);
 
         this.headerData = this.makeHeaderData();
 
