@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>NBADATA</title>
+    <link rel="icon" type="image/x-icon" href="assets/icon.png">
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/infocard.css" />
+    <link rel="stylesheet" href="css/scatterplot.css" />
+    <link rel="stylesheet" href="css/table.css" />
+    <link rel="stylesheet" href="css/relation.css" />
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+        integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <script src="https://d3js.org/d3-array.v2.min.js"></script>
+    <script src="https://d3js.org/d3-force.v2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.0"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="https://unpkg.com/d3-delaunay@4"></script>
+    <script src="https://unpkg.com/d3-geo-voronoi@1"></script>
+    <link rel="stylesheet" href="css/theme.min.css" />
+</head>
+
+<body>
+    <div id="header-wrap" class="item-title">
+        <header>
+            <img id="title-img" src="assets/background.png">
+        </header>
+    </div>
+    <div class="grid-container">
+        <div id="nav">
+            <label id="selector-label">Choose Season: </label>
+            <div class="selector-container">
+                <select name="Dataset" id="dataset-selector" class="form-control">
+                    <option value=1>Regular Season 2020</option>
+                    <option value=2>Playoffs 2020</option>
+                    <option value=3>Regular Season 2019</option>
+                    <option value=4>Playoffs 2019</option>
+                    <option value=5>Regular Season 2018</option>
+                    <option value=6>Playoffs 2018</option>
+                    <option value=7>Regular Season 2017</option>
+                    <option value=8>Playoffs 2017</option>
+                    <option value=9>Regular Season 2016</option>
+                    <option value=10>Playoffs 2016</option>
+                </select>
+            </div>
+            <div class="right-of-banner">
+            </div>
+        </div>
+
+        <div id="table-wrapper" class="item-table">
+            <div id="clear"></div>
+            <div id="search-bar-content">
+                <i class="fa fa-search icon"></i>
+                <input type="text" id="search-bar" placeholder="Search for player using id or name">
+            </div>
+            <table id="table">
+                <thead>
+                    <tr id="headers">
+                        <th class="sortable" width="80">NAME<i class="fas no-display"></i></th>
+                        <th class="sortable" width="70">TEAM<i class="fas no-display"></i></th>
+                        <th class="sortable">PTS<i class="fas no-display"></i></th>
+                        <th class="sortable">RPG<i class="fas no-display"></i></th>
+                        <th class="sortable">AST<i class="fas no-display"></i></th>
+                        <th class="sortable">STL<i class="fas no-display"></i></th>
+                        <th class="sortable">BLK<i class="fas no-display"></i></th>
+                        <th class="sortable">TO<i class="fas no-display"></i></th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+
+        </div>
+        <div class="item-infocard">
+
+            <div id="infocard">
+                <div id="bg_color" class="stats-player-summary team-color BKN" ng-class="{'no-team': !hasTeamTheme}"
+                    ng-init="isOpen=false">
+
+                    <div class="stats-teamplayer-summary-container with-padding">
+                        <!---->
+                        <div class="stats-player-summary__bg" ng-if="hasTeamTheme">
+                            <img id="team_background_logo" team-logo="" usenewlogos="true" abbr=""
+                                class="team-logo away team-img" type="image/svg+xml"
+                                src="https://cdn.nba.com/logos/nba/1610612751/global/D/logo.svg">
+                        </div>
+                        <!---->
+
+                        <div class="stats-player-summary__container">
+                            <div class="summary-player">
+                                <!---->
+
+                                <div class="summary-player__teamlogo" ng-if="hasTeamTheme">
+                                    <img id="team_logo" team-logo="" usenewlogos="true" abbr="BKN"
+                                        class="team-logo away team-img" type="image/svg+xml"
+                                        src="https://cdn.nba.com/logos/nba/1610612751/global/D/logo.svg">
+                                </div>
+                                <!---->
+
+                                <div class="summary-player__logo">
+                                    <img id="player_logo" player-headshot="" class="player-img"
+                                        src="https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/1610612751/2021/260x190/201935.png">
+                                </div>
+                                <div class="summary-player__text">
+                                    <div class="player-name">
+                                        <div class="stats-teamplayer-summary-text">
+                                            <!----><span ng-if="playerInfo.TEAM_ID != '0'">
+                                                <span id="team_name">Brooklyn Nets</span>
+                                            </span>
+                                            <!---->
+                                        </div>
+                                        <div class="stats-teamplayer-summary-text medium">
+                                            <span id="myname">1</span>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="summary-player-stats">
+                        <div class="hor-divider"></div>
+                        <div class="stats-teamplayer-summary-container with-padding">
+                            <div class="summary-player-stats__container">
+
+                                <div class="stats">
+                                    <div class="ver-divider"></div>
+                                    <div class="stats__category border-right">
+                                        <div class="stats-teamplayer-summary-text">PPG</div>
+                                        <div id="PTS" class="stats-teamplayer-summary-text medium"> 20.7 </div>
+                                    </div>
+                                    <div class="ver-divider"></div>
+                                    <div class="stats__category border-right">
+                                        <div class="stats-teamplayer-summary-text">RPG</div>
+                                        <div id="REB" class="stats-teamplayer-summary-text medium"> 7.9 </div>
+                                    </div>
+                                    <div class="ver-divider"></div>
+                                    <div class="stats__category border-right">
+                                        <div class="stats-teamplayer-summary-text">AST</div>
+                                        <div id="AST" class="stats-teamplayer-summary-text medium"> 9.6 </div>
+                                    </div>
+                                    <div class="ver-divider"></div>
+                                    <!---->
+                                    <div ng-if="availableStats.current" class="stats__category">
+                                        <div class="stats-teamplayer-summary-text">BLK</div>
+                                        <div id="BLK" class="stats-teamplayer-summary-text medium"> 15.6 </div>
+                                    </div>
+                                    <div class="ver-divider"></div>
+                                    <!---->
+                                    <div ng-if="availableStats.current" class="stats__category">
+                                        <div class="stats-teamplayer-summary-text">TO</div>
+                                        <div id="TO" class="stats-teamplayer-summary-text medium"> 15.6 </div>
+                                    </div>
+                                    <div class="ver-divider"></div>
+                                    <!---->
+                                    <div ng-if="availableStats.current" class="stats__category">
+                                        <div class="stats-teamplayer-summary-text">+/-</div>
+                                        <div id="plus_minus" class="stats-teamplayer-summary-text medium"> 15.6 </div>
+                                    </div>
+                                    <!---->
+                                    <!---->
+                                    <div ng-if="availableStats.current" class="ver-divider"></div>
+                                    <!---->
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="item-scatterplot"></div>
+        <div class="item-types">
+            <hr style="width: 90%;margin-bottom: 20px;">
+            <div class="intro">
+                <h1>Team Relations</h1>
+                <p>The foundation and the biggest highlight of the NBA league is the direct competing relationship
+                    between teams.<br/>
+                    The relationship between different teams in a certain season is shown in the figure below.<br />
+                    If a team win more games in the direct games against the other team in the whole season,
+                    the relationship will be rendered as <b style="color: red;">Win against</b> ;<br />
+                    otherwise, if the team loses more in the direct games against the other team,
+                    the relationship will be rendered as <b style="color: black;">Lose against</b> ;<br />
+                    else, the two teams have equal wins and loses,
+                    the relationship between them will be rendered as <b style="color: rgba(19, 79, 211, 0.493);">Equal against</b> .<br>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="map_pos">
+        <svg width="960" height="600">
+            <!-- must be in this order for drawing -->
+            <g id="basemap"></g>
+            <g id="types"></g>
+            <g id="games"></g>
+            <g id="teams"></g>
+            <g id="voronoi"></g>
+            <text id="tooltip" style="display: none;"></text>
+            <!-- <text id="tooltip" style="display: none;"></text> -->
+        </svg>
+    </div>
+    <div id="tool-tip"></div>
+
+    <script src="js/table.js"></script>
+    <script src="js/infocard.js"></script>
+    <script src="js/scatterplot.js"></script>
+    <script src="js/typeChart.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/team_relation.js"></script>
+    <script src="js/theme.min.js"></script>
+</body>
+
+</html>
